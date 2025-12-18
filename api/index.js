@@ -1,45 +1,40 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import connectDB from './src/DB/connectDb.js';
-import routes from './src/routes/user.routes.js';
+import connectDB from '../src/DB/connectDb.js';
+import routes from '../src/routes/user.routes.js';
 dotenv.config();
 import cors from 'cors'
-import { userAuthorization } from './src/middlewares/userAuthorization.js';
+import { userAuthorization } from '../src/middlewares/userAuthorization.js';
 
 
 const app = express();
 
-// let isConnected = false
-// async function connectDB(){
-//     try {
-//         const mongoUri = process.env.MONGO_URI
-//         const con = await mongoose.connect(mongoUri)
-//         isConnected = true
-//         console.log(`Database Connected successfully ${con.connection.host}`)
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
 
+
+
+//-------------------------------middleware--------------------------------
 
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:5173'
+    origin: '*'
 }))
 
-// app.use((req,res,next) => {
-//     if(!isConnected){
-//         connectDB()
-//     }
-//     next();
-// })
-// routes 
-app.use('/api/v1/auth', routes);
+let isConnected = false;
 
-app.get("/", async (req, res) => {
+app.use(async (req, res, next) => {
+  if (!isConnected) {
     await connectDB();
-    res.send("Backend running");
+    isConnected = true;
+  }
+  next();
 });
+ 
+//-----------------------------------------------routes-----------------------------------------
+app.use('/api/v1/auth', routes);
+app.get("/", (req, res) => {
+  res.send("Backend running 🚀");
+});
+
 
 app.get('/api/loggedIn', userAuthorization, (req, res) => {
     try {
@@ -64,4 +59,4 @@ app.get('/api/loggedIn', userAuthorization, (req, res) => {
 //     connectDB();
 // })
 
-module.exports = app
+export default app;
