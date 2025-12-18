@@ -31,7 +31,7 @@ app.use(async (req, res, next) => {
  
 //-----------------------------------------------routes-----------------------------------------
 app.use('/api/v1/auth', routes);
-app.get("/", (req, res) => {
+app.get("/check", (req, res) => {
   res.send("Backend running 🚀");
 });
 
