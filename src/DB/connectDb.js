@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 
 
-const connectDB = async (req, res) => {
+const connectDB = async () => {
 
 
     try {
@@ -12,10 +12,7 @@ const connectDB = async (req, res) => {
         console.log(`MongoDB connected : ${conn.connection.host}`);
     } catch (error) {
         console.error("MongoDB connection error:", error);
-        return res.status(400).json({
-            message:"Error found",
-            error
-        })
+        
     }
 };
 
