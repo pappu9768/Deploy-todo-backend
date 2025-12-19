@@ -16,19 +16,20 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({
-    origin: '*'
+  origin: '*'
 }))
 
-let isConnected = false;
-
 app.use(async (req, res, next) => {
-  if (!isConnected) {
+  try {
     await connectDB();
-    isConnected = true;
+    next();
+  } catch (error) {
+    console.error("DB connection failed:", error);
+    res.status(500).json({ message: "Database connection failed" });
   }
-  next();
 });
- 
+
+
 //-----------------------------------------------routes-----------------------------------------
 app.use('/api/v1/auth', routes);
 app.get("/check", (req, res) => {
@@ -37,20 +38,20 @@ app.get("/check", (req, res) => {
 
 
 app.get('/api/loggedIn', userAuthorization, (req, res) => {
-    try {
-        res.status(200).json({
-            success: true,
-            user: req.user
+  try {
+    res.status(200).json({
+      success: true,
+      user: req.user
 
 
-        })
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({
-            message: "error found while fetching logged in ",
-            error
-        })
-    }
+    })
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      message: "error found while fetching logged in ",
+      error
+    })
+  }
 })
 
 // const port = process.env.PORT
