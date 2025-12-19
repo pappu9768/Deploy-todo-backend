@@ -6,6 +6,9 @@ export const addMovies = async (req, res) => {
 
         const { title, year, director, cast, rating } = req.body;
 
+        if(!title || !year || !director || !cast || !rating){
+          throw new ApiError(400,"All fields are required")
+        }
         // Find max rank in DB
         const lastMovie = await movieModel.findOne().sort({ rank: -1 });
         // console.log(lastMovie)
